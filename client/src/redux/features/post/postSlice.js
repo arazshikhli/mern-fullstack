@@ -6,6 +6,14 @@ const initialState={
     popularPosts:[],
     loading:false
 }
+export const getAllPosts=createAsyncThunk('post/getAllPosts',async()=>{
+    try {
+        const {data}=await axios.get('/posts');
+        return data
+    } catch (error) {
+        console.log(error)
+    }
+})
  export const createPost=createAsyncThunk('post/createPost',async (params)=>{
     try {
         const {data}=await axios.post('/posts',params)
@@ -19,15 +27,27 @@ export const postSlice=createSlice({
     initialState,
     reducers:{},
     extraReducers:{
+        //Create Post
         [createPost.pending]:(state)=>{
             state.loading=true
         },
         [createPost.fulfilled]:(state,action)=>{
             state.loading=false
-            console.log(action.payload)
             state.posts.push(action.payload)  
         },
-        [createPost.rejected]:(state,action)=>{
+        [createPost.rejected]:(state)=>{
+            state.loading=false
+        },
+        //get All Posts
+        [getAllPosts.pending]:(state)=>{
+            state.loading=true
+        },
+        [getAllPosts.fulfilled]:(state,action)=>{
+            state.loading=false
+            state.posts=action.payload.allPosts
+            state.popularPosts=action.payload.popularPosts
+        },
+        [getAllPosts.rejected]:(state)=>{
             state.loading=false
         },
 

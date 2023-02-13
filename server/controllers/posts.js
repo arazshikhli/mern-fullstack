@@ -47,3 +47,37 @@ export const createPost=async (req,res)=>{
         })
     }
 }
+
+//Get all posts
+
+export const getAllPosts=async(req,res)=>{
+    try {
+        const allPosts=await Post.find().sort('-createdAt');
+        const popularPosts=await Post.find().limit(5).sort('-views');
+        if(!allPosts){
+            return res.json({
+                message:"Нет постов"
+            })
+        }
+        res.json({allPosts,popularPosts})
+        
+    } catch (error) {
+        res.json('Чтото пошло не так')
+    }
+}
+
+//Get all posts
+
+export const getPostById=async(req,res)=>{
+    try {
+       const post=await Post.findByIdAndUpdate(req.params.id,{
+        $inc:{views:1},
+       })
+       res.json(post)
+        
+    } catch (error) {
+        res.json({
+            message:'Чтото пошло не так'
+        })
+    }
+}
